@@ -1,41 +1,42 @@
 # == Class: module-fixhung
-#
-# Full description of class module-fixhung here.
-#
-# === Parameters
-#
-# Document parameters here.
-#
-# [*sample_parameter*]
-#   Explanation of what this parameter affects and what it defaults to.
-#   e.g. "Specify one or more upstream ntp servers as an array."
-#
-# === Variables
-#
-# Here you should define a list of variables that this module would require.
-#
-# [*sample_variable*]
-#   Explanation of how this variable affects the funtion of this class and if
-#   it has a default. e.g. "The parameter enc_ntp_servers must be set by the
-#   External Node Classifier as a comma separated list of hostnames." (Note,
-#   global variables should be avoided in favor of class parameters as
-#   of Puppet 2.6.)
-#
-# === Examples
-#
-#  class { module-fixhung:
-#    servers => [ 'pool.ntp.org', 'ntp.local.company.com' ],
-#  }
-#
-# === Authors
-#
-# Author Name <author@domain.com>
-#
-# === Copyright
-#
-# Copyright 2014 Your name here, unless otherwise noted.
-#
-class module-fixhung {
+class fixhung (
+  $max_age = 'USE_DEFAULTS',
+  $pid_path = 'USE_DEFAULTS',
+  $command_path = '/usr/local/bin/fix_hung.sh',
+  $status = 'present',
+  $owner  = 'root',
+  $group  = 'root',
+  $mode   = '755',
+  $cron_mins = '0',
+  $cron_hour = '0',
+){
+  
+  if $max_age == 'USE_DEFAULTS' {
+     $max_age_real = '120'
+  } else {
+     $max_age_real = $max_age
+  }
 
+  if $pid_path == 'USE_DEFAULTS' {
+     $pid_path_real = '/var/lib/puppet/state/agent_catalog_run.lock'
+  } else {
+     $pid_path_real = $pid_path
+  }
 
+  file { 'fix_hung.sh' :
+    ensure => file,
+    path   => $command_path,
+    content => template('fixhung/fix_hung.erb'),
+    owner  => $owner,
+    group  => $group,
+    mode   => $mode,
+  }
+ 
+  cron { 'fix_hung' :
+    ensure  => $status,
+    command => "${command_path} > /dev/null",
+    user    => $owner,
+    hour    => $cron_hour,
+    minute  => $cron_mins,
+  }
 }
