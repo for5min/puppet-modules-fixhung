@@ -1,15 +1,17 @@
 #!/bin/bash
 
-max_age=<%= max_age_real %>
+max_age=<%= @max_age %>
 
-age() {
+function age() {
   age_in_seconds=$(echo "$(date +%s) -$(stat -c %X /proc/$PID)" | bc)
   if [[ "$age_in_seconds" -ge "$max_age" ]];then
     kill -9 $PID
-    rm -rf <%= pid_path_real %>
+    rm -rf <%= @pid_path %>
   fi
-}
-if [[ -f "<%= pid_path_real %>" ]];then
-      PID=`cat <%= pid_path_real %>`
+  }
+
+
+if [[ -f "<%= @pid_path %>" ]];then
+      PID=`cat <%= @pid_path %>`
       age
 fi

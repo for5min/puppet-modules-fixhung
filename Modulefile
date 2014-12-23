@@ -1,5 +1,5 @@
 name    'puppet-module-fixhung'
-version '0.1.1'
+version '0.2.1'
 source 'UNKNOWN'
 author 'puppet'
 license 'Apache License, Version 2.0'
