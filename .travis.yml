@@ -1,6 +1,6 @@
 ---
 language: ruby
-script: "SPEC_OPTS='--format documentation' bundle exec rake spec"
+script: "bundle exec rake spec SPEC_OPTS='--format documentation' "
 env:
   - PUPPET_GEM_VERSION="~> 3.7"
 notifications:
